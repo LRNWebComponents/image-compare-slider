@@ -2,6 +2,8 @@
 <link rel="import" href="../materializecss-styles/materializecss-styles.html">
 <link rel="import" href="../hax-body-behaviors/hax-body-behaviors.html">
 <link rel="import" href="../schema-behaviors/schema-behaviors.html">
+<link rel="import" href="../iron-image/iron-image.html">
+<link rel="import" href="../paper-slider/paper-slider.html">
 <!--
 `image-compare-slider`
 Layers images over each other with a slider interface to compare them
@@ -20,8 +22,28 @@ Layers images over each other with a slider interface to compare them
       :host {
         display: block;
       }
+      :host .container {
+        position: relative;
+        margin-bottom: 315px;
+      }
+      :host .container > * {
+        left: 0;
+        position: absolute;
+      }
+      :host .container > div {
+        top: 0;
+        padding: 0 15px;
+      }
+      :host #top {
+        overflow-x: hidden;
+      }
     </style>
     <h2>[[title]]</h2>
+    <div class="container" style$="[[styles.container]]">
+      <div id="bottom"><iron-image src$="[[bottomSrc]]" sizing$="[[sizing]]" style$="[[styles.image]]"></iron-image></div>
+      <div id="top" style$="[[styles.top]]"><iron-image src$="[[topSrc]]" sizing$="[[sizing]]" style$="[[styles.image]]"></iron-image></div>
+    </div>
+    <paper-slider id="slider" value="50" class="max-width-no-padding" style$="[[styles.slider]]"></paper-slider>
   </template>
 
   <script>
@@ -29,6 +51,7 @@ Layers images over each other with a slider interface to compare them
 
       is: 'image-compare-slider',
       behaviors: [HAXBehaviors.PropertiesBehaviors, MaterializeCSSBehaviors.ColorBehaviors, SchemaBehaviors.Schema],
+      observers: ['_setStyles(width,height,sliderPercent)'],
       properties: {
         /**
          * Title
@@ -36,11 +59,86 @@ Layers images over each other with a slider interface to compare them
         title: {
           type: String,
         },
+        /**
+         * src for top image
+         */
+        topSrc: {
+          type: String,
+        },
+        /**
+         * src for top image
+         */
+        bottomSrc: {
+          type: String,
+        },
+        /**
+         * crop or contain
+         */
+        sizing: {
+          type: String,
+          value: 'contain'
+        },
+        /**
+         * width of images
+         */
+        width: {
+          type: Number,
+          value: 400
+        },
+        /**
+         * height of images
+         */
+        height: {
+          type: Number,
+          value: 300
+        },
+        /**
+         * height of images
+         */
+        height: {
+          type: Number,
+          value: 300
+        },
+        /**
+         * percent position of slider
+         */
+         sliderPercent: {
+          type: Number,
+          value: 50
+        },
+        /**
+         * calculated styles
+         */
+        styles: {
+          type: Object,
+          value: {
+            "image": "width: 400px; height: 300px;",
+            "slider": "width: 430px;",
+            "container": "margin-bottom: 315px;",
+            "top": "width: 50%;"
+          }
+        },
+      },
+      ready: function(){
+        let root = this, slider = this.$.slider;
+        slider.addEventListener('immediate-value-changed',function(e){
+          root.sliderPercent = slider.immediateValue;
+        });
+      },
+      _setStyles: function(width,height,sliderPercent){
+        let w = this.width, h = this.height, sw = w+30, cmb = h+15;
+        this.styles = {
+            "image": "width: "+w+"px; height: "+h+"px;",
+            "slider": "width: "+sw+"px;",
+            "container": "margin-bottom: "+cmb+"px;",
+            "top": "width: "+this.sliderPercent+"%;"
+          };
       },
       /**
        * Attached to the DOM, now fire.
        */
       attached: function() {
+
         // Establish hax property binding
         let props = {
           'canScale': true,
