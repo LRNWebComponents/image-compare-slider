@@ -144,19 +144,21 @@ Layers images over each other with a slider interface to compare them
           'canPosition': true,
           'canEditSource': false,
           'gizmo': {
-            'title': 'Sample gizmo',
-            'description': 'The user will be able to see this for selection in a UI.',
-            'icon': 'av:play-circle-filled',
-            'color': 'grey',
-            'groups': ['Video', 'Media'],
+            'title': 'Image comparison',
+            'description': 'Simple element to allow one image to swipe over top of the other.',
+            'icon': 'image:compare',
+            'color': 'orange',
+            'groups': ['Image', 'Media'],
             'handles': [
               {
-                'type': 'video',
-                'url': 'source'
+                'type': 'image',
+                'source': 'bottomSrc',
+                'source2': 'topSrc',
+                'title': 'title',
               }
             ],
             'meta': {
-              'author': 'Your organization on github'
+              'author': 'LRNWebComponents'
             }
           },
           'settings': {
@@ -175,7 +177,20 @@ Layers images over each other with a slider interface to compare them
                 'title': 'Title',
                 'description': 'The title of the element',
                 'inputMethod': 'textfield',
-                'icon': 'editor:title',
+              },
+              {
+                'property': 'bottomSrc',
+                'title': 'Bottom image',
+                'description': 'The base image to swipe over',
+                'inputMethod': 'textfield',
+                'validationType': 'url',
+              },
+              {
+                'property': 'topSrc',
+                'title': 'Top image',
+                'description': 'The top image that swipes over',
+                'inputMethod': 'textfield',
+                'validationType': 'url',
               },
             ],
             'advanced': [
